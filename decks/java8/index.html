@@ -12,6 +12,25 @@
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="../../lib/css/zenburn.css">
 
+		<style type="text/css">
+.highlight-inline {
+	background:inherit;
+	color:gray;
+}
+.highlight-inline span {
+	background:inherit;
+	color:inherit;
+}
+.highlight-red-inline {
+	background:inherit;
+	color:red;
+}
+.highlight-red-inline span {
+	background:inherit;
+	color:inherit;
+}
+		</style>
+
 		<!-- Printing and PDF exports -->
 		<script>
 			var link = document.createElement( 'link' );
@@ -22,12 +41,751 @@
 		</script>
 	</head>
 	<body>
+
+<!- =============================================================================================================================================->
+<!- =============================================================================================================================================->
+<!- =============================================================================================================================================->
+
+
 		<div class="reveal">
 			<div class="slides">
-				<section>Alex</section>
-				<section>Lipov</section>
+				<section><!- =================================================================================================================->
+					<h1>Java 8</h1>
+					<h2>new (Android) features</h2>
+					<h3>Android Point</h3>
+					<p>
+						<small>August 2016 <a href="http://blog.osom.info">Alex Lipov</a> / <a href="http://twitter.com/alex_lipov">@alex_lipov</a></small>
+					</p>
+				</section>
+				<section data-markdown><!-====================================================================================================->
+## Java 8 - Today's topics
+  - Lambda Expressions
+  - Interface Evolution
+  - Stream API and Collectors
+				</section>
+				<section>
+					<h2>Why should I care (now)?</h2>
+					<span class="fragment">Java 8 support was added in SDK 24</span>
+				</section>
+				<section>
+					<h2>Build Process</h2>
+				</section>
+				<section>
+					<h2>javac/dx toolchain</h2>
+					<img data-src="pics/javac_dex.png">
+				</section>
+				<section>
+					<h2>javac/dx toolchain</h2>
+					<img data-src="pics/javac_proguard_dex.png">
+				</section>
+				<section>
+					<h2>jack/jill toolchain</h2>
+					<img data-src="pics/jack.png">
+				</section>
+				<section>
+					<h2>jack/jill toolchain</h2>
+					<img data-src="pics/JackBlog.gif">
+				</section>
+				<section> 
+					<h2>Java 8 support in Android</h2>
+					To enable Java 8 features, you have to compile with Jack/Jill toolchain
+					<pre><code class="groovy" data-trim>
+android {
+  ...
+  defaultConfig {
+    ...
+    jackOptions {
+      enabled true
+    }
+  }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+}
+  					</code></pre>
+				</section>
+				<section>
+					<h2>Lambda Expression Support</h2>
+				</section>
+				<section data-transition="none"><!- =============================================================================================->
+					<h2>OnClickListener</h2>
+					<pre><code class="java" data-trim>
+public interface OnClickListener {
+    void onClick(View v);
+}
+  					</code></pre>
+				</section>
+				<section data-transition="none"><!- =============================================================================================->
+					<h2>Usage - named class</h2>
+					<pre><code class="java" data-trim>
+public class SomeListener implements View.OnClickListener {
+    @Override
+    public void onClick(View v) {
+        Log.d("TAG", "Clicked!");
+    }
+}
+  					</code></pre>
+ 					<pre class="java fragment"><code data-trim>
+SomeListener listener = new SomeListener();
+myView.setOnClickListener(listener);
+  					</code></pre>
+				</section>
+				<section data-transition="none"><!- =============================================================================================->
+					<h2>Usage - anonymous class</h2>
+					<pre><code data-trim class="java">
+View.OnClickListener listener = new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        Log.d("TAG", "Clicked!");
+    }
+};
+
+myView.setOnClickListener(listener);
+  					</code></pre>
+				</section>
+				<section data-transition="none"><!- =============================================================================================->
+					<h2>Usage - lambda</h2>
+					<pre class="fragment"><code data-trim>
+View.OnClickListener listener = new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        Log.d("TAG", "Clicked!");
+    }
+};
+
+myView.setOnClickListener(listener);
+  					</code></pre>
+				</section>
+				<section data-transition="none"><!- =============================================================================================->
+					<h2>Usage - lambda</h2>
+					<pre><code data-trim data-noescape>
+View.OnClickListener listener = <mark class="highlight-inline">new View.OnClickListener() {
+    @Override
+    public void onClick</mark>(View v) {
+        Log.d(&#x22;TAG&#x22;, &#x22;Clicked!&#x22;);
+    <mark class="highlight-inline">}</mark>
+};
+
+myView.setOnClickListener(listener);
+  					</code></pre>
+				</section>
+				<section data-transition="none"><!- =============================================================================================->
+					<h2>Usage - lambda</h2>
+					<pre><code data-trim data-noescape>
+View.OnClickListener listener = <mark class="highlight-inline">new View.OnClickListener() {
+    @Override
+    public void onClick(</mark>View v<mark class="highlight-inline">)</mark> {
+        Log.d(&#x22;TAG&#x22;, &#x22;Clicked!&#x22;);
+    <mark class="highlight-inline">}</mark>
+};
+
+myView.setOnClickListener(listener);
+  					</code></pre>
+				</section>
+				<section data-transition="none"><!- =============================================================================================->
+					<h2>Usage - lambda</h2>
+					<pre><code data-trim data-noescape>
+View.OnClickListener listener = <mark class="highlight-inline">new View.OnClickListener() {
+    @Override
+    public void onClick(View</mark> v<mark class="highlight-inline">)</mark> {
+        Log.d(&#x22;TAG&#x22;, &#x22;Clicked!&#x22;);
+    <mark class="highlight-inline">}</mark>
+};
+
+myView.setOnClickListener(listener);
+  					</code></pre>
+				</section>
+				<section data-transition="none"><!- =============================================================================================->
+					<h2>Usage - lambda</h2>
+					<pre><code data-trim data-noescape>
+View.OnClickListener listener = <mark class="highlight-inline">new View.OnClickListener() {
+    @Override
+    public void onClick(View</mark> v<mark class="highlight-inline">) {</mark>
+        Log.d(&#x22;TAG&#x22;, &#x22;Clicked!&#x22;);
+    <mark class="highlight-inline">}
+};</mark>
+
+myView.setOnClickListener(listener);
+  					</code></pre>
+				</section>
+				<section data-transition="none"><!- =============================================================================================->
+					<h2>Usage - lambda</h2>
+					<pre><code data-trim data-noescape>
+View.OnClickListener listener = <mark class="highlight-inline">new View.OnClickListener() {
+    @Override
+    public void onClick(View</mark> v<mark class="highlight-inline">)</mark> -> <mark class="highlight-inline">{</mark>
+        Log.d(&#x22;TAG&#x22;, &#x22;Clicked!&#x22;);
+    <mark class="highlight-inline">}
+};</mark>
+
+myView.setOnClickListener(listener);
+  					</code></pre>
+				</section>
+				<section data-transition="none"><!- =============================================================================================->
+					<h2>Usage - lambda</h2>
+					<pre><code data-trim class="java">
+View.OnClickListener listener = v -> Log.d("TAG", "Clicked!");
+
+myView.setOnClickListener(listener);
+  					</code></pre>
+				</section>
+				<section data-transition="none"><!- =============================================================================================->
+					<h2>What compiler generates?</h2>
+					<pre><code data-trim data-noescape>
+.method protected onCreate(Landroid/os/Bundle;)V
+    .locals 2
+    .prologue
+
+    invoke-super {p0, p1}, Landroid/app/Activity;->onCreate(Landroid/os/Bundle;)V
+    const/high16 v0, 0x7f030000
+    invoke-virtual {p0, v0}, Linfo/osom/java8demo/MainActivity;->setContentView(I)V
+    const/high16 v0, 0x7f080000
+    invoke-virtual {p0, v0}, Linfo/osom/java8demo/MainActivity;->findViewById(I)Landroid/view/View;
+    move-result-object v0
+    new-instance v1, Linfo/osom/java8demo/
+    	MainActivity$-void_onCreate_android_os_Bundle_savedInstanceState_LambdaImpl0;
+    invoke-direct {v1}, Linfo/osom/java8demo/
+    	MainActivity$-void_onCreate_android_os_Bundle_savedInstanceState_LambdaImpl0;-><init>()V
+    invoke-virtual {v0, v1}, Landroid/view/View;->setOnClickListener(Landroid/view/View$OnClickListener;)V
+    return-void
+    			</code></pre>
+				</section>
+				<section data-transition="none"><!- =============================================================================================->
+					<h2>What compiler generates?</h2>
+					<pre><code data-trim data-noescape>
+.method protected onCreate(Landroid/os/Bundle;)V
+    <mark class="highlight-inline">.locals 2
+    .prologue
+
+    invoke-super {p0, p1}, Landroid/app/Activity;->onCreate(Landroid/os/Bundle;)V
+    const/high16 v0, 0x7f030000
+    invoke-virtual {p0, v0}, Linfo/osom/java8demo/MainActivity;->setContentView(I)V
+    const/high16 v0, 0x7f080000
+    invoke-virtual {p0, v0}, Linfo/osom/java8demo/MainActivity;->findViewById(I)Landroid/view/View;
+    move-result-object v0
+    </mark>new-instance v1, Linfo/osom/java8demo/
+    	MainActivity$-void_onCreate_android_os_Bundle_savedInstanceState_LambdaImpl0;
+    invoke-direct {v1}, Linfo/osom/java8demo/
+    	MainActivity$-void_onCreate_android_os_Bundle_savedInstanceState_LambdaImpl0;-><init>()V
+    invoke-virtual {v0, v1}, Landroid/view/View;->setOnClickListener(Landroid/view/View$OnClickListener;)V
+    <mark class="highlight-inline">return-void</mark>
+    			</code></pre>
+				</section>
+				<section data-markdown><!- ===================================================================================================->
+## What is Lambda Expression?
+ - A lambda expression (closure) is an anonymous method
+ - Allows you to treat code as data, behavior can be stored in variables and passed to methods
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Lambda as anonymous method</h2>
+					Has an argument list, a return type, and a body
+					<pre><code data-trim>
+(Object o) -> return o.toString()
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Lambda as anonymous method</h2>
+					A method reference is a reference to an existing method
+					<pre><code data-trim>
+Object::toString
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Lambda as anonymous method</h2>
+					Lambdas can refer to (capture) values from the enclosing lexical scope
+					<pre><code class="java" data-trim>
+(Person p) -> p.getName().equals(name)
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Lambda as anonymous method</h2>
+					Compiler can often infer argument types from context
+					<pre><code data-trim class="java">
+p -> p.getName().equals(name)
+  					</code></pre>
+				</section>
+				<section><!- ===================================================================================================->
+<h2>What is the type of Lambda Expression?</h2>
+a Functional Interface - an interface with only one <i><b>abstract</b></i> method
+<br/><br/><span class="fragment">Compiler recognizes functional interfaces structurally (no syntax needed)</span>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Functional Interface</h2>
+an interface with only one <i><b>abstract</b></i> method
+					<pre><code data-trim>
+public interface OnClickListener {
+    void onClick(View v);
+}
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Functional Interface</h2>
+an interface with only one <i><b>abstract</b></i> method
+					<pre><code data-trim>
+public interface OnClickListener {
+    void onClick(View v);
+    void onAnotherClick(View v);
+}
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Functional Interface</h2>
+an interface with only one <i><b>abstract</b></i> method
+					<pre><code data-trim data-noescape>
+public interface OnClickListener {
+    void onClick(View v);
+    <mark class="highlight-red-inline">void onAnotherClick(View v);</mark>
+}
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Functional Interface</h2>
+an interface with only one <i><b>abstract</b></i> method
+					<pre><code data-trim data-noescape>
+@FunctionalInterface
+public interface OnClickListener {
+    void onClick(View v);
+    <mark class="highlight-red-inline">void onAnotherClick(View v);</mark>
+}
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>storing lambda in a variable</h2>
+					<pre><code class="java" data-trim>
+OnClickListener listener = v -> Log.d("TAG", "Clicked!");
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Passing lambda as a method parameter</h2>
+					<pre><code data-trim class="java">
+OnClickListener listener = v -> Log.d("TAG", "Clicked!");
+myView.setOnClickListener(listener);
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Lambda as a return value</h2>
+					<pre><code data-trim>
+public OnClickListener createLogClickListener() {
+    return v -> Log.d("TAG", "Clicked!");
+}
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Example</h2>
+					Let's say we want to write a method that prints names of selected (filtered) files in a folder
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Print file names in a folder</h2>
+					<pre><code data-trim class="java">
+void printFileNames(List&#x3C;File&#x3E; files, FileFilter fileFilter) {
+
+}
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Print file names in a folder - filter</h2>
+					<pre><code data-trim class="java">
+@FunctionalInterface
+public interface FileFilter {
+    boolean filter(@NonNull File file);
+}
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Print file names in a folder</h2>
+					<pre><code data-trim class="java">
+void printFileNames(List&#x3C;File&#x3E; files, FileFilter fileFilter) {
+    for (File file : files) {
+        if (fileFilter.filter(file)) {
+            Log.d(&#x22;TAG&#x22;, file.getName());
+        }
+    }
+}
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Print file names in a folder</h2>
+					<pre><code data-trim class="java">
+List&#x3C;File&#x3E; files = new ArrayList&#x3C;&#x3E;(2);
+files.add(new File(&#x22;doc.txt&#x22;));
+files.add(new File(&#x22;doc.csv&#x22;));
+
+FileFilter filter = file -&#x3E; {
+    return file.getName().endsWith(&#x22;.txt&#x22;);
+};
+
+printFileNames(files, filter);
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h3>Do we really need to create new interface type for each use case?</h3>
+					<pre class="fragment"><code data-trim>
+@FunctionalInterface
+public interface FileFilter {
+    boolean filter(File file);
+}
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Let's try to generalize</h2>
+					<pre><code data-trim>
+@FunctionalInterface
+public interface FileFilter {
+    boolean filter(File file);
+}
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Let's try to generalize</h2>
+					<pre><code data-trim data-noescape>
+@FunctionalInterface
+public interface <mark class="highlight-inline">FileFilter</mark> {
+    boolean filter(File file);
+}
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Let's try to generalize</h2>
+					<pre><code data-trim data-noescape>
+@FunctionalInterface
+public interface Predicate {
+    boolean filter(File file);
+}
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Let's try to generalize</h2>
+					<pre><code data-trim data-noescape>
+@FunctionalInterface
+public interface Predicate {
+    boolean <mark class="highlight-inline">filter</mark>(File file);
+}
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Let's try to generalize</h2>
+					<pre><code data-trim data-noescape>
+@FunctionalInterface
+public interface Predicate {
+    boolean test(File file);
+}
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Let's try to generalize</h2>
+					<pre><code data-trim data-noescape>
+@FunctionalInterface
+public interface Predicate {
+    boolean test(<mark class="highlight-inline">File file</mark>);
+}
+  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Let's try to generalize</h2>
+					<pre><code data-trim data-noescape>
+@FunctionalInterface
+public interface Predicate&#x3C;T&#x3E; {
+    boolean test(T t);
+}  					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Actually,</h2>
+					<h3 class="fragment">this (functional) interface already exists in SDK!</h3>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>java.util.function package</h2>
+					<pre><code data-trim data-noescape>
+package java.util.function;
+
+@FunctionalInterface
+public interface Predicate&#x3C;T&#x3E; {
+    boolean test(T t);
+
+    // .. redacted
+}				
+					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>And many others..</h2>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Supplier</h2>
+					<pre><code data-trim data-noescape>
+package java.util.function;
+
+@FunctionalInterface
+public interface Supplier&#x3C;T&#x3E; {
+    T get();
+}			
+					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Consumer</h2>
+					<pre><code data-trim data-noescape>
+package java.util.function;
+
+@FunctionalInterface
+public interface Consumer&#x3C;T&#x3E; {
+    void accept(T t);
+
+    // .. redacted
+}		
+					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>BiConsumer</h2>
+					<pre><code data-trim data-noescape>
+package java.util.function;
+
+@FunctionalInterface
+public interface BiConsumer&#x3C;T, U&#x3E; {
+    void accept(T t, U u);
+
+    // .. redacted
+}	
+					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Function</h2>
+					<pre><code data-trim data-noescape>
+package java.util.function;
+
+@FunctionalInterface
+public interface Function&#x3C;T, R&#x3E; {
+    R apply(T t);
+
+    // .. redacted
+}
+					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Function - example</h2>
+					<pre><code data-trim data-noescape class="java">
+Function&#x3C;String, String&#x3E; func = str -&#x3E; str.toUpperCase()
+					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Function - method reference</h2>
+					<pre><code data-trim data-noescape class="java">
+Function&#x3C;String, String&#x3E; func = <mark class="highlight-inline">str -&#x3E; str.</mark>toUpperCase<mark class="highlight-inline">()</mark>
+					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Function - method reference</h2>
+					<pre><code data-trim data-noescape class="java">
+Function&#x3C;String, String&#x3E; func = String::toUpperCase
+					</code></pre>
+				</section>
+				<section data-markdown><!-====================================================================================================->
+## Summary - Lambda
+  - Ability to pass behavior as data
+  - Prettier syntax - allows to write less code
+  - java.util.function Functional Interfaces (no backwards compatibility)
+  - Same performance on devices with minSdkVersion = 24
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Additional features</h2>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Let's review our print file names example</h2>
+					<pre><code data-trim data-noescape class="java">
+void printFileNames(List&#x3C;File&#x3E; files, FileFilter fileFilter) {
+    for (File file : files) {
+        if (fileFilter.filter(file)) {
+            Log.d(&#x22;TAG&#x22;, file.getName());
+        }
+    }
+}
+					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Let's review our print file names example</h2>
+					<pre><code data-trim data-noescape class="java">
+void printFileNames(List&#x3C;File&#x3E; files, <mark class="highlight-inline">FileFilter</mark> fileFilter) {
+    for (File file : files) {
+        if (fileFilter.<mark class="highlight-inline">filter</mark>(file)) {
+            Log.d(&#x22;TAG&#x22;, file.getName());
+        }
+    }
+}
+					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Let's review our print file names example</h2>
+					<pre><code data-trim data-noescape class="java">
+void printFileNames(List&#x3C;File&#x3E; files, Predicate&#x3C;File&#x3E; fileFilter) {
+    for (File file : files) {
+        if (fileFilter.test(file)) {
+            Log.d(&#x22;TAG&#x22;, file.getName());
+        }
+    }
+}
+					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>External Iteration</h2>
+					<pre><code data-trim data-noescape class="java">
+void printFileNames(List&#x3C;File&#x3E; files, Predicate&#x3C;File&#x3E; fileFilter) {
+    <mark class="highlight-inline">for (File file : files)</mark> {
+        if (fileFilter.test(file)) {
+            Log.d(&#x22;TAG&#x22;, file.getName());
+        }
+    <mark class="highlight-inline">}</mark>
+}
+					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Internal Iteration</h2>
+					<pre><code data-trim data-noescape class="java">
+void printFileNames(List&#x3C;File&#x3E; files, Predicate&#x3C;File&#x3E; fileFilter) {
+    files.forEach(file -> {
+        if (fileFilter.test(file)) {
+            Log.d(&#x22;TAG&#x22;, file.getName());
+        }
+    });
+}
+					</code></pre>
+					<span class="fragment">Where does <i><b>forEach</b></i> method come from?</span>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>forEach method signature</h2>
+					<pre><code data-trim data-noescape class="java">
+public interface Collection&#x3C;T&#x3E; extends Iterable&#x3C;T&#x3E; {
+    // .. redacted
+
+    void forEach(Consumer&#x3C;? super T&#x3E; action);
+}
+					</code></pre>
+					<span class="fragment">But, what will happen once we'll add this method to Collection interface?</span>
+					<br/>
+					<span class="fragment">Right, this will break all the existing implementations that we don't control!</span>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Solution: default method</h2>
+					<pre><code data-trim data-noescape>
+public interface Collection&#x3C;T&#x3E; extends Iterable&#x3C;T&#x3E; {
+    // .. redacted
+
+    default void forEach(Consumer&#x3C;? super T&#x3E; action) {
+        // default implementation
+    }
+}
+					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Wait, there's more: </h2>
+					<h2 class="fragment">Static Interface Methods</h2>
+					<pre><code data-trim data-noescape class="fragment java">
+package java.util.function;
+
+public interface Function&#x3C;T, R&#x3E; {
+    
+    // .. redacted
+
+    static &#x3C;T&#x3E; Function&#x3C;T, T&#x3E; identity() {
+        // .. redacted
+    }
+}
+					</code></pre>
+					<br/>
+					<span class="fragment">Similar to default methods, except that we can’t override them in the implementation classes</span>
+				</section>				
+				<section><!- =================================================================================================================->
+					<h2>Let's take another look on our print file names example</h2>
+					<pre><code data-trim data-noescape class="java">
+void printFileNames(List&#x3C;File&#x3E; files, Predicate&#x3C;File&#x3E; fileFilter) {
+    files.forEach(file -> {
+        if (fileFilter.test(file)) {
+            Log.d(&#x22;TAG&#x22;, file.getName());
+        }
+    });
+}
+					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Let's take another look on our print file names example</h2>
+					<pre><code data-trim data-noescape class="java">
+void printFileNames(List&#x3C;File&#x3E; files, Predicate&#x3C;File&#x3E; fileFilter) {
+    <mark class="highlight-inline">files.</mark>stream()<mark class="highlight-inline">.forEach(file -> {
+        if (fileFilter.test(file)) {
+            Log.d(&#x22;TAG&#x22;, file.getName());
+        }</mark>
+    });
+}
+					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Let's take another look on our print file names example</h2>
+					<pre><code data-trim data-noescape class="java">
+void printFileNames(List&#x3C;File&#x3E; files, Predicate&#x3C;File&#x3E; fileFilter) {
+    files.stream()
+    	.forEach(file -> {
+	        if (fileFilter.test(file)) {
+	            Log.d(&#x22;TAG&#x22;, file.getName());
+	        }</mark>
+        });
+}
+					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Let's take another look on our print file names example</h2>
+					<pre><code data-trim data-noescape class="java">
+void printFileNames(List&#x3C;File&#x3E; files, Predicate&#x3C;File&#x3E; fileFilter) {
+    files.stream()
+    	.forEach(file -> {
+	        <mark class="highlight-inline">if (fileFilter.test(file))</mark> {
+	            Log.d(&#x22;TAG&#x22;, file.getName());
+	        }
+        });
+}
+					</code></pre>
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>Let's take another look on our print file names example</h2>
+					<pre><code data-trim data-noescape class="java">
+void printFileNames(List&#x3C;File&#x3E; files, Predicate&#x3C;File&#x3E; fileFilter) {
+    files.stream()
+        .filter(fileFilter)
+    	.forEach(file -> Log.d(&#x22;TAG&#x22;, file.getName()));
+}
+					</code></pre>
+				</section>
+
+
+				<section data-markdown><!- ===================================================================================================->
+## Stream
+ - Represents a stream of values
+ - Not a data structure - doesn't store the values
+ - Source can be an array, collection and many others
+ - Efficient - does a single pass on the data
+				</section>
+				<section data-markdown><!- ===================================================================================================->
+## Summary
+ - Many great features
+ - Not backward compatible with devices running pre-24 API (except of Lambda expressions) 
+				</section>
+				<section><!- =================================================================================================================->
+					<h2>end.</h2>
+				</section>
+				<section data-markdown><!- ===================================================================================================->
+## References
+ - Android documentation - [Java 8 Language Features](https://developer.android.com/preview/j8-jack.html)
+ - Brian Goetz - [Java 8 Lambdas API presentation](https://youtu.be/Rkd166qA6WI)
+ - Brian Goetz - [Lambdas in Java: A peek under the Hood](https://youtu.be/MLksirK9nnE)
+ - Paul Rashidi - [Hello World, meet our new experimental toolchain, Jack and Jill](https://android-developers.blogspot.com/2014/12/hello-world-meet-our-new-experimental.html)
+ - Eric Lafortune - [The upcoming Jack and Jill compilers in Android](https://www.guardsquare.com/blog/the_upcoming_jack_and_jill_compilers_in_android) 
+				</section>
 			</div>
 		</div>
+
+
+
+<!- =============================================================================================================================================->
+<!- =============================================================================================================================================->
+<!- =============================================================================================================================================->
+
+
 
 		<script src="../../lib/js/head.min.js"></script>
 		<script src="../../js/reveal.js"></script>
@@ -36,6 +794,7 @@
 			// More info https://github.com/hakimel/reveal.js#configuration
 			Reveal.initialize({
 				history: true,
+				transition: "none",
 
 				// More info https://github.com/hakimel/reveal.js#dependencies
 				dependencies: [
