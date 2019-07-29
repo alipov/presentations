@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>SBM Leaders Day</title>
+		<link rel="stylesheet" href="../../css/reveal.css">
+		<link rel="stylesheet" href="../../css/theme/black.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h1>SBM/ZA <span style="color: green;">Android</span> Team</h1>
+					<h3>SBM Leaders Day</h3>
+					<p>
+						<small>July 2019 &nbsp;&nbsp;<a href="https://blog.osom.info">Alex Lipov</a></small>
+					</p>
+				</section>
+				<section>
+					<h2 id="responsibilities"></h2>
+					<img class="fragment" style="border-color: black;" data-src="pics/sbm.jpg">&nbsp;&nbsp;
+					<img class="fragment" style="border-color: black;" data-src="pics/za.jpg">&nbsp;&nbsp;
+					<img class="fragment" style="border-color: black;" data-src="pics/sdk.jpg">
+					<!-- <h4 class="fragment">SBM for Android</h4>
+					<h4 class="fragment">ZA for Android</h4>
+					<h4 class="fragment">SDK (Android)</h4> -->
+				</section>
+				<section>
+					<h2 id="achievements"></h2>
+					<img class="fragment" style="border-color: black;" data-src="pics/sdk.jpg">
+				</section>
+				<section>
+					<h2 id="next-features"></h2>
+					<img class="fragment" style="border-color: black;" data-src="pics/desserts.jpg">&nbsp;&nbsp;&nbsp;
+					<img class="fragment" style="border-color: black; margin-bottom: 55px;" data-src="pics/enterprise.jpeg">
+				</section>
+				<section>
+					<h2 id="thanks"></h2>
+				</section>
+			</div>
+		</div>
+
+		<script src="../../lib/js/head.min.js"></script>
+		<script src="../../js/reveal.js"></script>
+
+		<script>
+
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					// using async=true didn't work well so used false
+					{ src: '../../plugin/typed/typed.js', async: false , callback: function() { 
+					}}
+				]
+			});
+
+			var myState = {
+				responsibilities: null,
+				achievements: null,
+				nextFeatures: null,
+				thanks: null,
+			}
+
+			function createTyped(element, line) {
+				return new Typed(element, {
+								strings: [ line ],
+								loop: false,
+								loopCount: 1,
+								startDelay: 600,
+								typeSpeed: 65,
+								backSpeed: 55,
+								showCursor: false,
+							});
+			}
+
+
+			Reveal.addEventListener( 'slidechanged', function( event ) {
+				var state = Reveal.getState();
+				switch(state.indexh) {
+					case 1: 
+						if (myState.responsibilities === null) {
+							myState.responsibilities = createTyped('#responsibilities', "Team Responsibilities"); 
+						}
+						break;
+					case 2:
+						if (myState.achievements === null) {
+							myState.achievements = createTyped('#achievements', "Major H1 Achievements");
+						}
+						break;
+					case 3:
+						if (myState.nextFeatures === null) {
+							myState.nextFeatures = createTyped('#next-features', "Major H2 Features");
+						}
+						break;
+					case 4:
+						if (myState.thanks === null) {
+							myState.thanks = createTyped('#thanks', "Thanks!");
+						}
+						break;
+				}
+				console.log(state);
+				// event.previousSlide, event.currentSlide, event.indexh, event.indexv
+			} );
+
+		</script>
+
+	</body>
+</html>
